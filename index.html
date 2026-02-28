@@ -814,6 +814,17 @@
       </a>`;
     }
 
+    // ── Lazy loading with IntersectionObserver ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.classList.contains('loading') && !entry.target.dataset.rendering) {
+          entry.target.dataset.rendering = '1';
+          renderTweetEmbed(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '400px 0px' }); // start loading 400px before visible
+
     async function init() {
       const communityTweets = await loadCommunityTweets();
       const seen = new Set();
@@ -834,13 +845,16 @@
         wall.appendChild(createSkeletonCard(url));
       });
 
+      // Load Twitter widgets script, then lazy-render on scroll
       const script = document.createElement('script');
       script.src = 'https://platform.twitter.com/widgets.js';
       script.charset = 'utf-8';
       script.async = true;
       script.onload = () => {
         if (!window.twttr || !twttr.widgets) return;
-        document.querySelectorAll('.tweet-card.loading').forEach(renderTweetEmbed);
+        document.querySelectorAll('.tweet-card.loading').forEach(card => {
+          observer.observe(card);
+        });
       };
       document.body.appendChild(script);
     }
