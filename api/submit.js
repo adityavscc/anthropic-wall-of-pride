@@ -1,9 +1,18 @@
-import { Redis } from '@upstash/redis';
+const UPSTASH_URL = () => process.env.KV_REST_API_URL;
+const UPSTASH_TOKEN = () => process.env.KV_REST_API_TOKEN;
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
-});
+async function redis(command) {
+  const res = await fetch(`${UPSTASH_URL()}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${UPSTASH_TOKEN()}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(command),
+  });
+  const data = await res.json();
+  return data.result;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -24,14 +33,14 @@ export default async function handler(req, res) {
   const handle = tweetMatch[1];
   const normalizedUrl = `https://x.com/${handle}/status/${tweetId}`;
 
-  // Check for duplicates
-  const existing = await redis.lrange('approved_tweets', 0, -1);
+  // Check for duplicates in approved list
+  const existing = await redis(['LRANGE', 'approved_tweets', '0', '-1']);
   if ((existing || []).some(t => t.includes(tweetId))) {
     return res.status(409).json({ error: 'This post has already been added.' });
   }
 
-  // Check if already seen
-  const seen = await redis.sismember('seen_tweets', tweetId);
+  // Check if already submitted
+  const seen = await redis(['SISMEMBER', 'seen_tweets', tweetId]);
   if (seen) {
     return res.status(409).json({ error: 'This post has already been submitted.' });
   }
@@ -64,7 +73,7 @@ export default async function handler(req, res) {
     });
   }
 
-  // Auto-review with OpenRouter (free model)
+  // Auto-review with OpenRouter
   let approved = false;
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -79,25 +88,15 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'user',
-            content: `You are reviewing a tweet/post for a "Wall of Pride" page that celebrates people who support Anthropic's decision to refuse the Pentagon's demands to remove AI safety guardrails (no mass surveillance, no autonomous weapons without human oversight).
+            content: `You are reviewing a tweet for a "Wall of Pride" celebrating support for Anthropic refusing the Pentagon's demands to remove AI safety guardrails (no mass surveillance, no autonomous weapons without human oversight).
 
-APPROVE if the post:
-- Expresses support, pride, or solidarity with Anthropic's stance
-- Praises Anthropic/Dario Amodei for standing by their principles
-- Supports AI not being used for mass surveillance or autonomous weapons
-- Shares or amplifies Anthropic's statement positively
+APPROVE if: expresses support/pride/solidarity with Anthropic, praises Anthropic/Dario Amodei, supports AI safety principles, amplifies the statement positively.
 
-REJECT if the post:
-- Is critical of Anthropic's decision
-- Is spam, unrelated, or promotional
-- Is hateful or abusive
-- Supports the Pentagon's position against Anthropic
-- Is neutral news reporting without supportive angle
+REJECT if: critical of Anthropic, spam/unrelated/promotional, hateful, supports Pentagon against Anthropic, neutral news reporting.
 
-Tweet content:
-"${tweetText}"
+Tweet: "${tweetText}"
 
-Respond with ONLY "APPROVED" or "REJECTED" followed by a one-sentence reason.`,
+Respond ONLY "APPROVED" or "REJECTED" with a one-sentence reason.`,
           },
         ],
       }),
@@ -108,8 +107,8 @@ Respond with ONLY "APPROVED" or "REJECTED" followed by a one-sentence reason.`,
     approved = verdict.toUpperCase().startsWith('APPROVED');
   } catch (error) {
     console.error('LLM review failed:', error);
-    await redis.sadd('seen_tweets', tweetId);
-    await redis.lpush('pending_review', normalizedUrl);
+    await redis(['SADD', 'seen_tweets', tweetId]);
+    await redis(['LPUSH', 'pending_review', normalizedUrl]);
     return res.status(202).json({
       status: 'pending',
       message: 'Your submission is queued for review. Thank you!',
@@ -117,10 +116,10 @@ Respond with ONLY "APPROVED" or "REJECTED" followed by a one-sentence reason.`,
   }
 
   // Mark as seen
-  await redis.sadd('seen_tweets', tweetId);
+  await redis(['SADD', 'seen_tweets', tweetId]);
 
   if (approved) {
-    await redis.lpush('approved_tweets', normalizedUrl);
+    await redis(['LPUSH', 'approved_tweets', normalizedUrl]);
     return res.status(200).json({
       status: 'approved',
       message: 'Your post has been added to the Wall of Pride!',
@@ -128,8 +127,7 @@ Respond with ONLY "APPROVED" or "REJECTED" followed by a one-sentence reason.`,
   } else {
     return res.status(200).json({
       status: 'rejected',
-      message:
-        "This post doesn't appear to be in support of Anthropic's stance. Only supportive posts are featured on the Wall.",
+      message: "This post doesn't appear to be in support of Anthropic's stance. Only supportive posts are featured on the Wall.",
     });
   }
 }
