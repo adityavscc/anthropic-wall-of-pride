@@ -306,59 +306,29 @@
       margin: 0 !important;
     }
 
-    /* Loading skeleton */
-    .tweet-card.loading {
-      min-height: 200px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 20px;
+    /* Blockquote pre-render (before Twitter enhances) */
+    .tweet-card blockquote.twitter-tweet {
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      min-height: 60px;
     }
 
-    .tweet-card.loading .skeleton-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .tweet-card blockquote.twitter-tweet a {
+      color: var(--accent);
+      text-decoration: none;
     }
 
-    .tweet-card.loading .skeleton-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #1a1a1a;
-      flex-shrink: 0;
+    .tweet-card blockquote.twitter-tweet p {
+      margin: 0;
     }
 
-    .tweet-card.loading .skeleton-name {
-      height: 12px;
-      width: 100px;
-      background: #1a1a1a;
-      border-radius: 4px;
-    }
-
-    .tweet-card.loading .skeleton-line {
-      height: 10px;
-      background: #1a1a1a;
-      border-radius: 4px;
-    }
-
-    .tweet-card.loading .skeleton-line:nth-child(2) { width: 100%; }
-    .tweet-card.loading .skeleton-line:nth-child(3) { width: 85%; }
-    .tweet-card.loading .skeleton-line:nth-child(4) { width: 60%; }
-
-    .tweet-card.loading::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(196, 149, 106, 0.04), transparent);
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+    /* Smooth transition when Twitter replaces blockquote with iframe */
+    .tweet-card twitter-widget {
+      margin: 0 !important;
     }
 
     /* Failed embed fallback */
@@ -770,60 +740,13 @@
       }
     }
 
-    function createSkeletonCard(url) {
+    function createTweetCard(url) {
+      const handle = url.match(/x\.com\/([^/]+)/)?.[1] || '';
       const card = document.createElement('div');
-      card.className = 'tweet-card loading';
-      card.dataset.url = url;
-      card.innerHTML = `
-        <div class="skeleton-header">
-          <div class="skeleton-avatar"></div>
-          <div class="skeleton-name"></div>
-        </div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-      `;
+      card.className = 'tweet-card';
+      card.innerHTML = `<blockquote class="twitter-tweet" data-dnt="true" data-theme="dark" data-conversation="none"><a href="${url}">Loading @${handle}...</a></blockquote>`;
       return card;
     }
-
-    function renderTweetEmbed(card) {
-      const url = card.dataset.url;
-      const idMatch = url.match(/status\/(\d+)/);
-      if (!idMatch || !window.twttr) return;
-
-      card.innerHTML = '';
-      twttr.widgets.createTweet(idMatch[1], card, {
-        theme: 'dark',
-        dnt: true,
-        conversation: 'none',
-      }).then(el => {
-        card.classList.remove('loading');
-        if (!el) showFallback(card, url);
-      }).catch(() => {
-        card.classList.remove('loading');
-        showFallback(card, url);
-      });
-    }
-
-    function showFallback(card, url) {
-      card.classList.add('failed');
-      const handle = url.match(/x\.com\/([^/]+)/)?.[1] || '';
-      card.innerHTML = `<a href="${url}" target="_blank" rel="noopener">
-        <svg class="x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        View post by @${handle}
-      </a>`;
-    }
-
-    // ── Lazy loading with IntersectionObserver ──
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.target.classList.contains('loading') && !entry.target.dataset.rendering) {
-          entry.target.dataset.rendering = '1';
-          renderTweetEmbed(entry.target);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: '400px 0px' }); // start loading 400px before visible
 
     async function init() {
       const communityTweets = await loadCommunityTweets();
@@ -841,21 +764,16 @@
       totalTweets = allTweets.length;
       countEl.textContent = totalTweets;
 
+      // Render all blockquotes immediately
       allTweets.forEach(url => {
-        wall.appendChild(createSkeletonCard(url));
+        wall.appendChild(createTweetCard(url));
       });
 
-      // Load Twitter widgets script, then lazy-render on scroll
+      // Twitter's widgets.js progressively enhances all blockquotes
       const script = document.createElement('script');
       script.src = 'https://platform.twitter.com/widgets.js';
       script.charset = 'utf-8';
       script.async = true;
-      script.onload = () => {
-        if (!window.twttr || !twttr.widgets) return;
-        document.querySelectorAll('.tweet-card.loading').forEach(card => {
-          observer.observe(card);
-        });
-      };
       document.body.appendChild(script);
     }
 
@@ -896,12 +814,12 @@
           input.value = '';
 
           const normalizedUrl = url.replace('twitter.com', 'x.com');
-          const card = createSkeletonCard(normalizedUrl);
+          const card = createTweetCard(normalizedUrl);
           wall.prepend(card);
           totalTweets++;
           countEl.textContent = totalTweets;
 
-          if (window.twttr) renderTweetEmbed(card);
+          if (window.twttr) twttr.widgets.load(card);
         } else if (data.status === 'pending') {
           statusEl.textContent = data.message;
           statusEl.className = 'submit-status pending';
