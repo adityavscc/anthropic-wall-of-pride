@@ -290,7 +290,14 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 14px;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tweet-card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .tweet-card:hover {
@@ -298,36 +305,35 @@
       box-shadow: 0 0 40px var(--accent-glow);
     }
 
-    .tweet-card .twitter-tweet {
-      margin: 0 !important;
-    }
-
-    .tweet-card .twitter-tweet-rendered {
-      margin: 0 !important;
-    }
-
-    /* Blockquote pre-render (before Twitter enhances) */
+    /* Hide the raw blockquote — only show Twitter's rendered widget */
     .tweet-card blockquote.twitter-tweet {
-      margin: 0 !important;
-      padding: 0 !important;
-      border: none !important;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-muted);
-      min-height: 60px;
+      display: none !important;
     }
 
-    .tweet-card blockquote.twitter-tweet a {
-      color: var(--accent);
-      text-decoration: none;
+    /* Placeholder: X icon + handle */
+    .tweet-card .card-placeholder {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0;
+      color: #555;
+      font-size: 13px;
     }
 
-    .tweet-card blockquote.twitter-tweet p {
-      margin: 0;
+    .tweet-card .card-placeholder svg {
+      width: 16px;
+      height: 16px;
+      opacity: 0.4;
+      flex-shrink: 0;
     }
 
-    /* Smooth transition when Twitter replaces blockquote with iframe */
-    .tweet-card twitter-widget {
+    /* Once Twitter renders the widget, hide placeholder */
+    .tweet-card.rendered .card-placeholder {
+      display: none;
+    }
+
+    .tweet-card twitter-widget,
+    .tweet-card .twitter-tweet-rendered {
       margin: 0 !important;
     }
 
@@ -742,9 +748,16 @@
 
     function createTweetCard(url) {
       const handle = url.match(/x\.com\/([^/]+)/)?.[1] || '';
+      const tweetId = url.match(/status\/(\d+)/)?.[1] || '';
       const card = document.createElement('div');
       card.className = 'tweet-card';
-      card.innerHTML = `<blockquote class="twitter-tweet" data-dnt="true" data-theme="dark" data-conversation="none"><a href="${url}">Loading @${handle}...</a></blockquote>`;
+      card.dataset.tweetId = tweetId;
+      card.innerHTML = `
+        <div class="card-placeholder">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          @${handle}
+        </div>
+        <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark" data-conversation="none"><a href="${url}"></a></blockquote>`;
       return card;
     }
 
@@ -764,16 +777,29 @@
       totalTweets = allTweets.length;
       countEl.textContent = totalTweets;
 
-      // Render all blockquotes immediately
+      // Render all cards with placeholders
       allTweets.forEach(url => {
         wall.appendChild(createTweetCard(url));
       });
 
-      // Twitter's widgets.js progressively enhances all blockquotes
+      // Show cards with staggered fade-in
+      document.querySelectorAll('.tweet-card').forEach((card, i) => {
+        setTimeout(() => card.classList.add('visible'), i * 20);
+      });
+
+      // Load Twitter widgets.js
       const script = document.createElement('script');
       script.src = 'https://platform.twitter.com/widgets.js';
       script.charset = 'utf-8';
       script.async = true;
+      script.onload = () => {
+        // When Twitter renders a widget, swap placeholder for embed
+        twttr.events.bind('rendered', (event) => {
+          const widget = event.target;
+          const card = widget.closest('.tweet-card');
+          if (card) card.classList.add('rendered');
+        });
+      };
       document.body.appendChild(script);
     }
 
@@ -816,6 +842,7 @@
           const normalizedUrl = url.replace('twitter.com', 'x.com');
           const card = createTweetCard(normalizedUrl);
           wall.prepend(card);
+          requestAnimationFrame(() => card.classList.add('visible'));
           totalTweets++;
           countEl.textContent = totalTweets;
 
