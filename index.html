@@ -305,11 +305,6 @@
       box-shadow: 0 0 40px var(--accent-glow);
     }
 
-    /* Hide the raw blockquote — only show Twitter's rendered widget */
-    .tweet-card blockquote.twitter-tweet {
-      display: none !important;
-    }
-
     /* Placeholder: X icon + handle */
     .tweet-card .card-placeholder {
       display: flex;
@@ -752,13 +747,34 @@
       const card = document.createElement('div');
       card.className = 'tweet-card';
       card.dataset.tweetId = tweetId;
+      card.dataset.url = url;
       card.innerHTML = `
         <div class="card-placeholder">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           @${handle}
-        </div>
-        <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark" data-conversation="none"><a href="${url}"></a></blockquote>`;
+        </div>`;
       return card;
+    }
+
+    function renderTweet(card) {
+      const tweetId = card.dataset.tweetId;
+      const url = card.dataset.url;
+      twttr.widgets.createTweet(tweetId, card, {
+        theme: 'dark',
+        dnt: true,
+        conversation: 'none',
+      }).then((widget) => {
+        if (widget) {
+          card.classList.add('rendered');
+        } else {
+          // Tweet unavailable — show fallback link
+          card.classList.add('failed');
+          const placeholder = card.querySelector('.card-placeholder');
+          if (placeholder) {
+            placeholder.innerHTML = `<a href="${url}" target="_blank" rel="noopener"><svg class="x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> View on X</a>`;
+          }
+        }
+      });
     }
 
     async function init() {
@@ -777,27 +793,26 @@
       totalTweets = allTweets.length;
       countEl.textContent = totalTweets;
 
-      // Render all cards with placeholders
+      // Create all cards with placeholders (no blockquotes)
       allTweets.forEach(url => {
         wall.appendChild(createTweetCard(url));
       });
 
-      // Show cards with staggered fade-in
+      // Staggered fade-in of placeholder cards
       document.querySelectorAll('.tweet-card').forEach((card, i) => {
-        setTimeout(() => card.classList.add('visible'), i * 20);
+        setTimeout(() => card.classList.add('visible'), i * 15);
       });
 
-      // Load Twitter widgets.js
+      // Load Twitter widgets.js, then render tweets programmatically
       const script = document.createElement('script');
       script.src = 'https://platform.twitter.com/widgets.js';
       script.charset = 'utf-8';
       script.async = true;
       script.onload = () => {
-        // When Twitter renders a widget, swap placeholder for embed
-        twttr.events.bind('rendered', (event) => {
-          const widget = event.target;
-          const card = widget.closest('.tweet-card');
-          if (card) card.classList.add('rendered');
+        twttr.ready(() => {
+          document.querySelectorAll('.tweet-card').forEach(card => {
+            renderTweet(card);
+          });
         });
       };
       document.body.appendChild(script);
@@ -846,7 +861,7 @@
           totalTweets++;
           countEl.textContent = totalTweets;
 
-          if (window.twttr) twttr.widgets.load(card);
+          if (window.twttr) renderTweet(card);
         } else if (data.status === 'pending') {
           statusEl.textContent = data.message;
           statusEl.className = 'submit-status pending';
