@@ -47,10 +47,72 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Hero ── */
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .topbar-left {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-left .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .add-tweet-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+    }
+
+    .add-tweet-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .add-tweet-btn:active {
+      transform: scale(0.97);
+    }
+
+    .add-tweet-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ── Hero (compact) ── */
     .hero {
       text-align: center;
-      padding: 80px 24px 48px;
+      padding: 24px 24px 32px;
       max-width: 800px;
       margin: 0 auto;
       position: relative;
@@ -67,40 +129,13 @@
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
     }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border-radius: 100px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 32px;
-      letter-spacing: 0.04em;
-    }
-
-    .hero-badge .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
-    }
-
     .hero h1 {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 400;
       line-height: 1.1;
       letter-spacing: -0.02em;
-      margin-bottom: 24px;
+      margin-bottom: 14px;
     }
 
     .hero h1 .highlight {
@@ -109,28 +144,27 @@
     }
 
     .hero-subtitle {
-      font-size: 16px;
-      line-height: 1.7;
+      font-size: 15px;
+      line-height: 1.6;
       color: var(--text-muted);
-      max-width: 600px;
-      margin: 0 auto 32px;
+      max-width: 580px;
+      margin: 0 auto 18px;
     }
 
     .hero-quote {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-size: clamp(1rem, 2vw, 1.2rem);
       font-style: italic;
       color: var(--text);
-      max-width: 560px;
+      max-width: 500px;
       margin: 0 auto;
       line-height: 1.5;
-      padding: 0 24px;
     }
 
     .hero-quote::before,
     .hero-quote::after {
       color: var(--accent);
-      font-size: 1.5em;
+      font-size: 1.4em;
       opacity: 0.5;
     }
 
@@ -138,27 +172,63 @@
     .hero-quote::after { content: '\201D'; }
 
     .hero-attribution {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
-      margin-top: 12px;
+      margin-top: 8px;
       letter-spacing: 0.03em;
     }
 
-    /* ── Context banner ── */
+    /* ── Context banner (collapsible) ── */
     .context {
       max-width: 760px;
       margin: 0 auto;
       padding: 0 24px;
     }
 
-    .context-inner {
+    .context-toggle {
       display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .context-toggle:hover {
+      border-color: #333;
+    }
+
+    .context-toggle svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.2s;
+    }
+
+    .context-toggle.open svg {
+      transform: rotate(180deg);
+    }
+
+    .context-inner {
+      display: none;
       gap: 24px;
-      padding: 24px 28px;
+      padding: 20px 24px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
+    }
+
+    .context-inner.open {
+      display: flex;
     }
 
     .context-line {
@@ -169,8 +239,8 @@
     }
 
     .context-text {
-      font-size: 14px;
-      line-height: 1.8;
+      font-size: 13px;
+      line-height: 1.7;
       color: var(--text-muted);
     }
 
@@ -183,8 +253,7 @@
     .stats {
       display: flex;
       justify-content: center;
-      gap: 48px;
-      padding: 24px 24px 32px;
+      padding: 16px 24px 20px;
     }
 
     .stat {
@@ -193,34 +262,34 @@
 
     .stat-number {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: 2rem;
+      font-size: 1.8rem;
       color: var(--accent);
     }
 
     .stat-label {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
-    /* ── Masonry grid ── */
+    /* ── Masonry grid (4 columns) ── */
     .wall {
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 24px;
-      columns: 3;
-      column-gap: 20px;
+      padding: 16px 24px;
+      columns: 4;
+      column-gap: 16px;
     }
 
     .tweet-card {
       break-inside: avoid;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 14px;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -239,38 +308,38 @@
 
     /* Loading skeleton */
     .tweet-card.loading {
-      min-height: 220px;
+      min-height: 200px;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 24px;
+      gap: 10px;
+      padding: 20px;
     }
 
     .tweet-card.loading .skeleton-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .tweet-card.loading .skeleton-avatar {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: #1a1a1a;
       flex-shrink: 0;
     }
 
     .tweet-card.loading .skeleton-name {
-      height: 14px;
-      width: 120px;
+      height: 12px;
+      width: 100px;
       background: #1a1a1a;
       border-radius: 4px;
     }
 
     .tweet-card.loading .skeleton-line {
-      height: 12px;
+      height: 10px;
       background: #1a1a1a;
       border-radius: 4px;
     }
@@ -295,13 +364,13 @@
     /* Failed embed fallback */
     .tweet-card.failed {
       min-height: 0;
-      padding: 20px 24px;
+      padding: 18px 20px;
     }
 
     .tweet-card.failed a {
       color: var(--accent);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -312,30 +381,30 @@
     }
 
     .tweet-card.failed .x-icon {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       opacity: 0.6;
     }
 
     /* ── Sidewalk section ── */
     .sidewalk {
       max-width: 760px;
-      margin: 48px auto;
+      margin: 40px auto;
       padding: 0 24px;
       text-align: center;
     }
 
     .sidewalk-label {
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--text-muted);
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .sidewalk-text {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      font-size: clamp(1rem, 2vw, 1.2rem);
       color: var(--text);
       line-height: 1.6;
       font-style: italic;
@@ -353,7 +422,7 @@
     /* ── Submit section ── */
     .submit-section {
       max-width: 560px;
-      margin: 0 auto 64px;
+      margin: 0 auto 48px;
       padding: 0 24px;
     }
 
@@ -361,21 +430,21 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 36px 32px;
+      padding: 32px 28px;
       text-align: center;
     }
 
     .submit-card h2 {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 400;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .submit-card .submit-desc {
       font-size: 14px;
       color: var(--text-muted);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       line-height: 1.6;
     }
 
@@ -386,7 +455,7 @@
 
     .submit-input {
       flex: 1;
-      padding: 12px 16px;
+      padding: 11px 14px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -406,7 +475,7 @@
     }
 
     .submit-btn {
-      padding: 12px 24px;
+      padding: 11px 22px;
       background: var(--accent);
       color: #0a0a0a;
       border: none;
@@ -434,7 +503,7 @@
     }
 
     .submit-status {
-      margin-top: 16px;
+      margin-top: 14px;
       font-size: 14px;
       line-height: 1.5;
       min-height: 21px;
@@ -447,67 +516,98 @@
     /* ── Footer ── */
     .footer {
       text-align: center;
-      padding: 0 24px 40px;
-      color: var(--text-muted);
-      font-size: 14px;
-      line-height: 1.8;
+      padding: 0 24px 48px;
+      max-width: 480px;
+      margin: 0 auto;
     }
 
-    .footer a {
+    .footer-bio {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .footer-bio a {
       color: var(--accent);
       text-decoration: none;
     }
 
-    .footer a:hover {
+    .footer-bio a:hover {
       text-decoration: underline;
     }
 
-    .footer .separator {
+    .footer-links {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .footer-links a {
+      color: #666;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .footer-links .separator {
       display: inline-block;
-      width: 4px;
-      height: 4px;
+      width: 3px;
+      height: 3px;
       border-radius: 50%;
-      background: var(--border);
-      margin: 0 12px;
+      background: #333;
+      margin: 0 10px;
       vertical-align: middle;
     }
 
     /* ── Responsive ── */
-    @media (max-width: 1024px) {
+    @media (max-width: 1200px) {
+      .wall { columns: 3; }
+    }
+
+    @media (max-width: 900px) {
       .wall { columns: 2; }
     }
 
     @media (max-width: 640px) {
       .wall {
         columns: 1;
-        padding: 16px;
+        padding: 12px 16px;
       }
       .hero {
-        padding: 60px 20px 40px;
+        padding: 16px 20px 28px;
       }
-      .stats {
-        gap: 32px;
+      .topbar {
+        padding: 12px 16px;
       }
       .context-inner {
-        padding: 20px;
-        gap: 16px;
+        padding: 16px;
+        gap: 12px;
       }
       .submit-form {
         flex-direction: column;
       }
       .submit-card {
-        padding: 28px 20px;
+        padding: 24px 18px;
       }
     }
   </style>
 </head>
 <body>
 
-  <header class="hero">
-    <div class="hero-badge">
+  <nav class="topbar">
+    <div class="topbar-left">
       <span class="dot"></span>
       March 1, 2026
     </div>
+    <button class="add-tweet-btn" onclick="document.getElementById('tweet-url').focus(); document.getElementById('submit-section').scrollIntoView({behavior:'smooth'})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Your Tweet
+    </button>
+  </nav>
+
+  <header class="hero">
     <h1>Wall of <span class="highlight">Pride</span></h1>
     <p class="hero-subtitle">
       Anthropic drew a line. No mass surveillance. No autonomous weapons without human oversight.
@@ -522,7 +622,11 @@
   </header>
 
   <div class="context">
-    <div class="context-inner">
+    <button class="context-toggle" id="context-toggle" onclick="this.classList.toggle('open'); document.getElementById('context-detail').classList.toggle('open')">
+      What happened?
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="context-inner" id="context-detail">
       <div class="context-line"></div>
       <div class="context-text">
         <strong>What happened:</strong> The Pentagon demanded Anthropic remove two safety guardrails —
@@ -551,7 +655,7 @@
     </p>
   </div>
 
-  <section class="submit-section">
+  <section class="submit-section" id="submit-section">
     <div class="submit-card">
       <h2>Add Your Voice</h2>
       <p class="submit-desc">
@@ -574,15 +678,19 @@
   </section>
 
   <footer class="footer">
-    Made by <a href="https://x.com/adityavsc" target="_blank" rel="noopener">Aditya</a> with Claude's help
-    <span class="separator"></span>
-    <a href="https://www.anthropic.com/news/statement-department-of-war" target="_blank" rel="noopener">Read the statement</a>
+    <p class="footer-bio">
+      I'm <a href="https://x.com/adityavsc" target="_blank" rel="noopener">Aditya</a>, building
+      <a href="https://superprofile.bio/" target="_blank" rel="noopener">SuperProfile</a> — a platform
+      for creators to grow and monetize. Made this page with Claude because some things are worth celebrating.
+    </p>
+    <div class="footer-links">
+      <a href="https://www.anthropic.com/news/statement-department-of-war" target="_blank" rel="noopener">Read the statement</a>
+      <span class="separator"></span>
+      <a href="https://superprofile.bio/" target="_blank" rel="noopener">Try SuperProfile</a>
+    </div>
   </footer>
 
   <script>
-    // ──────────────────────────────────────────────
-    //  CURATED TWEETS (hardcoded)
-    // ──────────────────────────────────────────────
     const CURATED_TWEETS = [
       // ── Anthropic official ──
       'https://x.com/AnthropicAI/status/2027150818575528261',
@@ -651,7 +759,6 @@
     const countEl = document.getElementById('tweet-count');
     let totalTweets = CURATED_TWEETS.length;
 
-    // ── Fetch community-submitted tweets from API ──
     async function loadCommunityTweets() {
       try {
         const res = await fetch('/api/tweets');
@@ -663,7 +770,6 @@
       }
     }
 
-    // ── Render a tweet card ──
     function createSkeletonCard(url) {
       const card = document.createElement('div');
       card.className = 'tweet-card loading';
@@ -708,12 +814,8 @@
       </a>`;
     }
 
-    // ── Init ──
     async function init() {
-      // Load community tweets
       const communityTweets = await loadCommunityTweets();
-
-      // Merge, dedupe by tweet ID
       const seen = new Set();
       const allTweets = [];
 
@@ -728,12 +830,10 @@
       totalTweets = allTweets.length;
       countEl.textContent = totalTweets;
 
-      // Create skeleton cards
       allTweets.forEach(url => {
         wall.appendChild(createSkeletonCard(url));
       });
 
-      // Load Twitter widgets
       const script = document.createElement('script');
       script.src = 'https://platform.twitter.com/widgets.js';
       script.charset = 'utf-8';
@@ -751,22 +851,22 @@
     const form = document.getElementById('submit-form');
     const input = document.getElementById('tweet-url');
     const btn = document.getElementById('submit-btn');
-    const status = document.getElementById('submit-status');
+    const statusEl = document.getElementById('submit-status');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const url = input.value.trim();
 
       if (!url.match(/(?:x\.com|twitter\.com)\/\w+\/status\/\d+/)) {
-        status.textContent = 'Please enter a valid X/Twitter post URL.';
-        status.className = 'submit-status error';
+        statusEl.textContent = 'Please enter a valid X/Twitter post URL.';
+        statusEl.className = 'submit-status error';
         return;
       }
 
       btn.disabled = true;
       btn.textContent = 'Reviewing...';
-      status.textContent = '';
-      status.className = 'submit-status';
+      statusEl.textContent = '';
+      statusEl.className = 'submit-status';
 
       try {
         const res = await fetch('/api/submit', {
@@ -777,11 +877,10 @@
         const data = await res.json();
 
         if (res.ok && data.status === 'approved') {
-          status.textContent = data.message;
-          status.className = 'submit-status success';
+          statusEl.textContent = 'Thank you for standing up for safer AI. Your tweet has been added to the wall!';
+          statusEl.className = 'submit-status success';
           input.value = '';
 
-          // Add the tweet to the wall immediately
           const normalizedUrl = url.replace('twitter.com', 'x.com');
           const card = createSkeletonCard(normalizedUrl);
           wall.prepend(card);
@@ -790,16 +889,16 @@
 
           if (window.twttr) renderTweetEmbed(card);
         } else if (data.status === 'pending') {
-          status.textContent = data.message;
-          status.className = 'submit-status pending';
+          statusEl.textContent = data.message;
+          statusEl.className = 'submit-status pending';
           input.value = '';
         } else {
-          status.textContent = data.error || data.message || 'Something went wrong.';
-          status.className = 'submit-status error';
+          statusEl.textContent = data.error || data.message || 'Something went wrong.';
+          statusEl.className = 'submit-status error';
         }
       } catch {
-        status.textContent = 'Network error. Please try again.';
-        status.className = 'submit-status error';
+        statusEl.textContent = 'Network error. Please try again.';
+        statusEl.className = 'submit-status error';
       }
 
       btn.disabled = false;
