@@ -1,4 +1,9 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -20,13 +25,13 @@ export default async function handler(req, res) {
   const normalizedUrl = `https://x.com/${handle}/status/${tweetId}`;
 
   // Check for duplicates
-  const existing = await kv.lrange('approved_tweets', 0, -1);
+  const existing = await redis.lrange('approved_tweets', 0, -1);
   if ((existing || []).some(t => t.includes(tweetId))) {
     return res.status(409).json({ error: 'This post has already been added.' });
   }
 
   // Check if already seen
-  const seen = await kv.sismember('seen_tweets', tweetId);
+  const seen = await redis.sismember('seen_tweets', tweetId);
   if (seen) {
     return res.status(409).json({ error: 'This post has already been submitted.' });
   }
@@ -103,8 +108,8 @@ Respond with ONLY "APPROVED" or "REJECTED" followed by a one-sentence reason.`,
     approved = verdict.toUpperCase().startsWith('APPROVED');
   } catch (error) {
     console.error('LLM review failed:', error);
-    await kv.sadd('seen_tweets', tweetId);
-    await kv.lpush('pending_review', normalizedUrl);
+    await redis.sadd('seen_tweets', tweetId);
+    await redis.lpush('pending_review', normalizedUrl);
     return res.status(202).json({
       status: 'pending',
       message: 'Your submission is queued for review. Thank you!',
@@ -112,10 +117,10 @@ Respond with ONLY "APPROVED" or "REJECTED" followed by a one-sentence reason.`,
   }
 
   // Mark as seen
-  await kv.sadd('seen_tweets', tweetId);
+  await redis.sadd('seen_tweets', tweetId);
 
   if (approved) {
-    await kv.lpush('approved_tweets', normalizedUrl);
+    await redis.lpush('approved_tweets', normalizedUrl);
     return res.status(200).json({
       status: 'approved',
       message: 'Your post has been added to the Wall of Pride!',
