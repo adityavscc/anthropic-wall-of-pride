@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anthropic — Wall of Pride</title>
+  <meta name="description" content="When Anthropic refused to compromise on mass surveillance and autonomous weapons, the world stood with them. These are the voices.">
+  <meta property="og:title" content="Anthropic — Wall of Pride">
+  <meta property="og:description" content="'We cannot in good conscience accede to their request.' — Dario Amodei. The community stands with Anthropic.">
+  <meta property="og:image" content="/api/og">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Anthropic — Wall of Pride">
+  <meta name="twitter:description" content="'We cannot in good conscience accede to their request.' The community stands with Anthropic.">
+  <meta name="twitter:image" content="/api/og">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-hover: #1a1a1a;
+      --border: #222;
+      --text: #e8e4df;
+      --text-muted: #8a8580;
+      --accent: #c4956a;
+      --accent-hover: #d4a57a;
+      --accent-glow: rgba(196, 149, 106, 0.15);
+      --green: #4ade80;
+      --red: #f87171;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 48px;
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .hero h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 .highlight {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+
+    .hero-quote {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-style: italic;
+      color: var(--text);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.5;
+      padding: 0 24px;
+    }
+
+    .hero-quote::before,
+    .hero-quote::after {
+      color: var(--accent);
+      font-size: 1.5em;
+      opacity: 0.5;
+    }
+
+    .hero-quote::before { content: '\201C'; }
+    .hero-quote::after { content: '\201D'; }
+
+    .hero-attribution {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Context banner ── */
+    .context {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .context-inner {
+      display: flex;
+      gap: 24px;
+      padding: 24px 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 40px;
+    }
+
+    .context-line {
+      width: 2px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--accent), transparent);
+      border-radius: 2px;
+    }
+
+    .context-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .context-text strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      padding: 24px 24px 32px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    /* ── Masonry grid ── */
+    .wall {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+      columns: 3;
+      column-gap: 20px;
+    }
+
+    .tweet-card {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tweet-card:hover {
+      border-color: rgba(196, 149, 106, 0.3);
+      box-shadow: 0 0 40px var(--accent-glow);
+    }
+
+    .tweet-card .twitter-tweet {
+      margin: 0 !important;
+    }
+
+    .tweet-card .twitter-tweet-rendered {
+      margin: 0 !important;
+    }
+
+    /* Loading skeleton */
+    .tweet-card.loading {
+      min-height: 220px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px;
+    }
+
+    .tweet-card.loading .skeleton-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tweet-card.loading .skeleton-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      flex-shrink: 0;
+    }
+
+    .tweet-card.loading .skeleton-name {
+      height: 14px;
+      width: 120px;
+      background: #1a1a1a;
+      border-radius: 4px;
+    }
+
+    .tweet-card.loading .skeleton-line {
+      height: 12px;
+      background: #1a1a1a;
+      border-radius: 4px;
+    }
+
+    .tweet-card.loading .skeleton-line:nth-child(2) { width: 100%; }
+    .tweet-card.loading .skeleton-line:nth-child(3) { width: 85%; }
+    .tweet-card.loading .skeleton-line:nth-child(4) { width: 60%; }
+
+    .tweet-card.loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(196, 149, 106, 0.04), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Failed embed fallback */
+    .tweet-card.failed {
+      min-height: 0;
+      padding: 20px 24px;
+    }
+
+    .tweet-card.failed a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tweet-card.failed a:hover {
+      text-decoration: underline;
+    }
+
+    .tweet-card.failed .x-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.6;
+    }
+
+    /* ── Sidewalk section ── */
+    .sidewalk {
+      max-width: 760px;
+      margin: 48px auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .sidewalk-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .sidewalk-text {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      color: var(--text);
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .sidewalk-text a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .sidewalk-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Submit section ── */
+    .submit-section {
+      max-width: 560px;
+      margin: 0 auto 64px;
+      padding: 0 24px;
+    }
+
+    .submit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px 32px;
+      text-align: center;
+    }
+
+    .submit-card h2 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .submit-card .submit-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .submit-form {
+      display: flex;
+      gap: 10px;
+    }
+
+    .submit-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .submit-input::placeholder {
+      color: #555;
+    }
+
+    .submit-input:focus {
+      border-color: var(--accent);
+    }
+
+    .submit-btn {
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.97);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .submit-status {
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 21px;
+    }
+
+    .submit-status.success { color: var(--green); }
+    .submit-status.error { color: var(--red); }
+    .submit-status.pending { color: var(--accent); }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 0 24px 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer .separator {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border);
+      margin: 0 12px;
+      vertical-align: middle;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .wall { columns: 2; }
+    }
+
+    @media (max-width: 640px) {
+      .wall {
+        columns: 1;
+        padding: 16px;
+      }
+      .hero {
+        padding: 60px 20px 40px;
+      }
+      .stats {
+        gap: 32px;
+      }
+      .context-inner {
+        padding: 20px;
+        gap: 16px;
+      }
+      .submit-form {
+        flex-direction: column;
+      }
+      .submit-card {
+        padding: 28px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      March 1, 2026
+    </div>
+    <h1>Wall of <span class="highlight">Pride</span></h1>
+    <p class="hero-subtitle">
+      Anthropic drew a line. No mass surveillance. No autonomous weapons without human oversight.
+      The Pentagon demanded they erase it. They refused. The world responded.
+    </p>
+    <p class="hero-quote">
+      We cannot in good conscience accede to their request.
+    </p>
+    <p class="hero-attribution">
+      Dario Amodei, CEO of Anthropic
+    </p>
+  </header>
+
+  <div class="context">
+    <div class="context-inner">
+      <div class="context-line"></div>
+      <div class="context-text">
+        <strong>What happened:</strong> The Pentagon demanded Anthropic remove two safety guardrails —
+        the ban on AI-driven mass domestic surveillance and the requirement for human oversight on autonomous weapons.
+        Anthropic refused. They were designated a "supply chain risk," and President Trump ordered all federal agencies
+        to stop using their technology. 330+ employees across Google and OpenAI signed an open letter in solidarity.
+        Chalk messages of gratitude covered the sidewalks outside Anthropic's San Francisco headquarters.
+      </div>
+    </div>
+  </div>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-number" id="tweet-count">—</div>
+      <div class="stat-label">Voices</div>
+    </div>
+  </section>
+
+  <main class="wall" id="wall"></main>
+
+  <div class="sidewalk">
+    <div class="sidewalk-label">Meanwhile, on the sidewalks of San Francisco</div>
+    <p class="sidewalk-text">
+      Dozens of thank-you messages, American flags, and a Nelson Mandela quote on courage
+      were chalked on the sidewalks outside Anthropic's headquarters.
+    </p>
+  </div>
+
+  <section class="submit-section">
+    <div class="submit-card">
+      <h2>Add Your Voice</h2>
+      <p class="submit-desc">
+        Posted in support of Anthropic? Submit your tweet and it will be
+        automatically reviewed and added to the wall.
+      </p>
+      <form class="submit-form" id="submit-form">
+        <input
+          class="submit-input"
+          type="url"
+          id="tweet-url"
+          placeholder="https://x.com/you/status/..."
+          required
+          autocomplete="off"
+        />
+        <button class="submit-btn" type="submit" id="submit-btn">Submit</button>
+      </form>
+      <div class="submit-status" id="submit-status"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Made by <a href="https://x.com/adityavsc" target="_blank" rel="noopener">Aditya</a> with Claude's help
+    <span class="separator"></span>
+    <a href="https://www.anthropic.com/news/statement-department-of-war" target="_blank" rel="noopener">Read the statement</a>
+  </footer>
+
+  <script>
+    // ──────────────────────────────────────────────
+    //  CURATED TWEETS (hardcoded)
+    // ──────────────────────────────────────────────
+    const CURATED_TWEETS = [
+      // ── Anthropic official ──
+      'https://x.com/AnthropicAI/status/2027150818575528261',
+      'https://x.com/AnthropicAI/status/2027555481699446918',
+
+      // ── Anthropic employees ──
+      'https://x.com/mlpowered/status/2027157865153306948',
+      'https://x.com/ch402/status/2027155043045220418',
+      'https://x.com/thebasepoint/status/2027197486075703596',
+      'https://x.com/EvanHub/status/2027203672464404572',
+
+      // ── Industry leaders ──
+      'https://x.com/VitalikButerin/status/2026382701562048545',
+      'https://x.com/JeffDean/status/2026566490619879574',
+      'https://x.com/deanwball/status/2027515599358730315',
+      'https://x.com/vkhosla/status/2027564849899978979',
+
+      // ── Politicians ──
+      'https://x.com/SenMarkey/status/2027165379945025913',
+      'https://x.com/ColinAllredTX/status/2027195478702465437',
+      'https://x.com/ValerieFoushee/status/2027413390616916376',
+
+      // ── User-provided (verified) ──
+      'https://x.com/sethbannon/status/2027173671832535087',
+      'https://x.com/felixrieseberg/status/2027552854991679507',
+      'https://x.com/malpani/status/2027632986775290002',
+      'https://x.com/TheEuropeansHQ/status/2027500087069360616',
+      'https://x.com/cirospaciari/status/2027559453256782208',
+      'https://x.com/tensorbert/status/2027561660429312187',
+
+      // ── Community voices ──
+      'https://x.com/championswimmer/status/2027155639684788650',
+      'https://x.com/RobertHaisfield/status/2026838018150269209',
+      'https://x.com/deepfates/status/2026408465762234747',
+      'https://x.com/michaelsobolik/status/2027154543390122078',
+      'https://x.com/v_shakthi/status/2027619394634043768',
+      'https://x.com/three_cube/status/2027222654835654736',
+      'https://x.com/cryptopunk7213/status/2027154218084393180',
+      'https://x.com/ai_for_success/status/2027189518408044702',
+      'https://x.com/algekalipso/status/2027155416065753472',
+      'https://x.com/AndrewCurran_/status/2027153267285962991',
+      'https://x.com/malcolm_john/status/2027550129474179247',
+      'https://x.com/MadisonMills22/status/2027198505299607611',
+      'https://x.com/WesRoth/status/2026307377344213406',
+
+      // ── The irony (OpenAI got same terms) ──
+      'https://x.com/peterwildeford/status/2027587926075330664',
+      'https://x.com/dee_bosa/status/2027589160899600691',
+      'https://x.com/Hadas_Gold/status/2027580552828645626',
+
+      // ── Journalists & media ──
+      'https://x.com/jrivanob/status/2027570909603893346',
+      'https://x.com/engadget/status/2027471676087140542',
+      'https://x.com/CNBC/status/2027454771775365237',
+      'https://x.com/miles_brundage/status/2027157876473807188',
+      'https://x.com/DavidJeans2/status/2026392954252808259',
+      'https://x.com/JenGriffinFNC/status/2026384132360605892',
+
+      // ── Analysis ──
+      'https://x.com/TheZvi/status/2026762775767155047',
+      'https://x.com/TheZvi/status/2027486326317088896',
+    ];
+
+    // ── State ──
+    const wall = document.getElementById('wall');
+    const countEl = document.getElementById('tweet-count');
+    let totalTweets = CURATED_TWEETS.length;
+
+    // ── Fetch community-submitted tweets from API ──
+    async function loadCommunityTweets() {
+      try {
+        const res = await fetch('/api/tweets');
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.tweets || [];
+      } catch {
+        return [];
+      }
+    }
+
+    // ── Render a tweet card ──
+    function createSkeletonCard(url) {
+      const card = document.createElement('div');
+      card.className = 'tweet-card loading';
+      card.dataset.url = url;
+      card.innerHTML = `
+        <div class="skeleton-header">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-name"></div>
+        </div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+      `;
+      return card;
+    }
+
+    function renderTweetEmbed(card) {
+      const url = card.dataset.url;
+      const idMatch = url.match(/status\/(\d+)/);
+      if (!idMatch || !window.twttr) return;
+
+      card.innerHTML = '';
+      twttr.widgets.createTweet(idMatch[1], card, {
+        theme: 'dark',
+        dnt: true,
+        conversation: 'none',
+      }).then(el => {
+        card.classList.remove('loading');
+        if (!el) showFallback(card, url);
+      }).catch(() => {
+        card.classList.remove('loading');
+        showFallback(card, url);
+      });
+    }
+
+    function showFallback(card, url) {
+      card.classList.add('failed');
+      const handle = url.match(/x\.com\/([^/]+)/)?.[1] || '';
+      card.innerHTML = `<a href="${url}" target="_blank" rel="noopener">
+        <svg class="x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        View post by @${handle}
+      </a>`;
+    }
+
+    // ── Init ──
+    async function init() {
+      // Load community tweets
+      const communityTweets = await loadCommunityTweets();
+
+      // Merge, dedupe by tweet ID
+      const seen = new Set();
+      const allTweets = [];
+
+      for (const url of [...CURATED_TWEETS, ...communityTweets]) {
+        const id = url.match(/status\/(\d+)/)?.[1];
+        if (id && !seen.has(id)) {
+          seen.add(id);
+          allTweets.push(url);
+        }
+      }
+
+      totalTweets = allTweets.length;
+      countEl.textContent = totalTweets;
+
+      // Create skeleton cards
+      allTweets.forEach(url => {
+        wall.appendChild(createSkeletonCard(url));
+      });
+
+      // Load Twitter widgets
+      const script = document.createElement('script');
+      script.src = 'https://platform.twitter.com/widgets.js';
+      script.charset = 'utf-8';
+      script.async = true;
+      script.onload = () => {
+        if (!window.twttr || !twttr.widgets) return;
+        document.querySelectorAll('.tweet-card.loading').forEach(renderTweetEmbed);
+      };
+      document.body.appendChild(script);
+    }
+
+    init();
+
+    // ── Submit form ──
+    const form = document.getElementById('submit-form');
+    const input = document.getElementById('tweet-url');
+    const btn = document.getElementById('submit-btn');
+    const status = document.getElementById('submit-status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = input.value.trim();
+
+      if (!url.match(/(?:x\.com|twitter\.com)\/\w+\/status\/\d+/)) {
+        status.textContent = 'Please enter a valid X/Twitter post URL.';
+        status.className = 'submit-status error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Reviewing...';
+      status.textContent = '';
+      status.className = 'submit-status';
+
+      try {
+        const res = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.status === 'approved') {
+          status.textContent = data.message;
+          status.className = 'submit-status success';
+          input.value = '';
+
+          // Add the tweet to the wall immediately
+          const normalizedUrl = url.replace('twitter.com', 'x.com');
+          const card = createSkeletonCard(normalizedUrl);
+          wall.prepend(card);
+          totalTweets++;
+          countEl.textContent = totalTweets;
+
+          if (window.twttr) renderTweetEmbed(card);
+        } else if (data.status === 'pending') {
+          status.textContent = data.message;
+          status.className = 'submit-status pending';
+          input.value = '';
+        } else {
+          status.textContent = data.error || data.message || 'Something went wrong.';
+          status.className = 'submit-status error';
+        }
+      } catch {
+        status.textContent = 'Network error. Please try again.';
+        status.className = 'submit-status error';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Submit';
+    });
+  </script>
+
+</body>
+</html>
